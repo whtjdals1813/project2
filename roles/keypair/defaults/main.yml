@@ -1,0 +1,4 @@
+---
+key_name: project2-key
+region: ap-northeast-2
+pem_file_path: "./{{ key_name }}.pem"

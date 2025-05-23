@@ -1,0 +1,18 @@
+---
+# AMI 삭제
+- name: Deregister AMI
+  amazon.aws.ec2_ami:
+    image_id: "{{ project2_ami_id }}"
+    state: absent
+    region: "{{ region }}"
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+  register: ami_deregister_result
+
+# vars.yml에서 AMI 정보 제거
+- name: Remove AMI ID block from vars.yml
+  blockinfile:
+    path: /home/rocky/project2/vars.yml
+    marker: "# {mark} ami"
+    state: absent
+

@@ -1,0 +1,17 @@
+---
+# 시작 템플릿 삭제
+- name: Delete launch template
+  amazon.aws.ec2_launch_template:
+    name: project2-template
+    state: absent
+    region: "{{ region }}"
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+  register: delete_launch_template_result
+
+# vars.yml에서 launch_template_id 제거
+- name: Remove launch_template block from vars.yml
+  blockinfile:
+    path: /home/rocky/project2/vars.yml
+    marker: "# {mark} launch_template"
+    state: absent

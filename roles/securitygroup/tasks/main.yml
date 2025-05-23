@@ -1,0 +1,85 @@
+---
+# 보안그룹 SSH
+- name: Create EC2 security group only ssh    
+  ec2_group:
+    name: project2-SSH-Accept
+    description: project2-SSH-Accept
+    vpc_id: "{{ vpc_id }}" 
+    region: "{{ region }}"
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    rules:
+      - proto: tcp
+        ports:
+          - 22
+        cidr_ip: 0.0.0.0/0
+    tags:
+      Name: project2-SSH-Accept
+  register: sg_remote_result
+  when: sg_remote_result is not defined or sg_remote_result.changed
+
+
+- name: Save the project2-SSH-Accept
+  blockinfile:
+    path: /home/rocky/project2/vars.yml
+    block: |
+      sg_remote_id: {{ sg_remote_result.group_id }} 
+    marker: "# {mark} sg_remote"
+
+
+# 보안그룹 HTTP
+- name: Create EC2 security group http
+  ec2_group:
+    name: project2-HTTP-Accept
+    description: project2-HTTP-Accept
+    vpc_id: "{{ vpc_id }}" 
+    region: "{{ region }}"
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    rules:
+      - proto: tcp
+        ports:
+          - 80
+          - 443
+        cidr_ip: 0.0.0.0/0
+
+
+    tags:
+      Name: project2-HTTP-Accept
+  register: sg_web_result
+  when: sg_web_result is not defined or sg_web_result.changed
+
+
+- name: Save the project2-HTTP-Accept
+  blockinfile:
+    path: /home/rocky/project2/vars.yml
+    block: |
+      sg_web_id: {{ sg_web_result.group_id }}
+    marker: "# {mark} sg_web"
+
+# 보안그룹 spring
+- name: Create EC2 security group http spring
+  ec2_group:
+    name: project2-spring
+    description: project2-spring
+    vpc_id: "{{ vpc_id }}" 
+    region: "{{ region }}"
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    rules:
+      - proto: tcp
+        ports:
+          - 8080
+        cidr_ip: 0.0.0.0/0
+    tags:
+      Name: project2-spring
+  register: sg_spring_result
+  when: sg_spring_result is not defined or sg_spring_result.changed
+
+
+- name: Save the project2-spring
+  blockinfile:
+    path: /home/rocky/project2/vars.yml
+    block: |
+      sg_spring_id: {{ sg_spring_result.group_id }}
+    marker: "# {mark} sg_spring"

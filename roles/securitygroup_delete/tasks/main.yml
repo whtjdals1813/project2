@@ -1,0 +1,54 @@
+---
+# tasks file for securitygroup_delete
+# SSH 보안 그룹 삭제
+- name: Delete security group project2-SSH-Accept
+  amazon.aws.ec2_group:
+    name: project2-SSH-Accept
+    region: "{{ region }}"
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    state: absent
+    vpc_id: "{{ vpc_id }}"
+  register: delete_sg_ssh_result
+
+- name: Remove sg_remote block from vars.yml
+  blockinfile:
+    path: /home/rocky/project2/vars.yml
+    marker: "# {mark} sg_remote"
+    state: absent
+
+
+# HTTP 보안 그룹 삭제
+- name: Delete security group project2-HTTP-Accept
+  amazon.aws.ec2_group:
+    name: project2-HTTP-Accept
+    region: "{{ region }}"
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    state: absent
+    vpc_id: "{{ vpc_id }}"
+  register: delete_sg_http_result
+
+- name: Remove sg_web block from vars.yml
+  blockinfile:
+    path: /home/rocky/project2/vars.yml
+    marker: "# {mark} sg_web"
+    state: absent
+
+
+# SPRING 보안 그룹 삭제
+- name: Delete security group project2-spring
+  amazon.aws.ec2_group:
+    name: project2-spring
+    region: "{{ region }}"
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    state: absent
+    vpc_id: "{{ vpc_id }}"
+  register: delete_sg_spring_result
+
+- name: Remove sg_spring block from vars.yml
+  blockinfile:
+    path: /home/rocky/project2/vars.yml
+    marker: "# {mark} sg_spring"
+    state: absent

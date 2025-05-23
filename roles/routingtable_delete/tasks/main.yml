@@ -1,0 +1,38 @@
+---
+# 퍼블릭 라우팅 테이블 삭제
+- name: Delete Public Route Table by Name tag
+  amazon.aws.ec2_vpc_route_table:
+    region: "{{ region }}"
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    vpc_id: "{{ vpc_id }}"
+    tags:
+      Name: project2_public_route_table
+    state: absent
+  register: delete_public_route_table_result
+
+
+# 프라이빗 라우팅 테이블 2a 삭제
+- name: Delete Private Route Table 2a by Name tag
+  amazon.aws.ec2_vpc_route_table:
+    region: "{{ region }}"
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    vpc_id: "{{ vpc_id }}"
+    tags:
+      Name: project2_private_route_table_2a
+    state: absent
+  register: delete_private_route_table_result_2a
+
+
+# 프라이빗 라우팅 테이블 2c 삭제
+- name: Delete Private Route Table 2c by Name tag
+  amazon.aws.ec2_vpc_route_table:
+    region: "{{ region }}"
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    vpc_id: "{{ vpc_id }}"
+    tags:
+      Name: project2_private_route_table_2c
+    state: absent
+  register: delete_private_route_table_result_2c

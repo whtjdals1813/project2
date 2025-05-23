@@ -1,0 +1,45 @@
+- name: Create ASG
+  ec2_asg:
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    region: "{{ region }}"
+    name: project2-autoscaling-group
+    launch_template:
+      launch_template_id: "{{ launch_template_id }}"
+      version: "$Latest"
+    availability_zones:
+      - ap-northeast-2a
+      - ap-northeast-2c
+    vpc_zone_identifier:
+      - "{{ subnet_pri_2a }}"
+      - "{{ subnet_pri_2c }}"
+    min_size: 1
+    max_size: 2
+    desired_capacity: 2
+    target_group_arns:
+      - "{{ target_group_web_arn }}"
+    tags:
+      - Name: project2-autoscaling-group
+    state: present
+  register: asg
+
+
+- name: Save asg
+  blockinfile:
+    path: /home/rocky/project2/vars.yml
+    block: |
+      project2_asg_name: "{{ asg.auto_scaling_group_name }}"
+      project2_asg_arn: "{{ asg.auto_scaling_group_arn }}"
+    marker: "# {mark} project2_asg_name"
+
+- name: Register Jenkins EC2 instance
+  community.aws.elb_target:
+    target_group_arn: "{{ target_group_jenkins_arn }}"
+    target_id: "{{ jenkins_arn }}"
+    state: present
+    region: "{{ region }}"
+    target_port: 80
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+
+

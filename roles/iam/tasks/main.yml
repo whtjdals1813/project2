@@ -1,0 +1,182 @@
+---
+# tasks file for iam
+- name: Create IAM Policy for EC2
+
+  iam_managed_policy:
+    policy_name: project2-code-deploy-ec2-Policy
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    region: "{{ region }}"
+    policy: |
+      {
+        "Version": "2012-10-17",
+        "Statement": [
+          {
+            "Effect": "Allow",
+            "Action": [
+              "s3:Get*",
+              "s3:List*"
+            ],
+            "Resource": "*"
+          }
+        ]
+      }
+    state: present
+    tags:
+      Name: project2-code-deploy-ec2-Policy
+  register: ec2_policy
+
+- name: Save the project2_ec2_policy
+  blockinfile:
+    path: /home/rocky/project2/vars.yml
+    block: |
+      ec2_policy_arn: {{ ec2_policy.policy.arn }}
+    marker: "# {mark} ec2_policy"
+
+
+
+- name: Create IAM Policy for CodeDeploy
+
+  iam_managed_policy:
+    policy_name: project2-code-deploy-service-policy
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    region: "{{ region }}"
+    policy: |
+      {
+        "Version": "2012-10-17",
+        "Statement": [
+          {
+            "Effect": "Allow",
+            "Action": [
+            "autoscaling:CompleteLifecycleAction",
+            "autoscaling:DeleteLifecycleHook",
+            "autoscaling:DescribeAutoScalingGroups",
+            "autoscaling:DescribeLifecycleHooks",
+            "autoscaling:PutLifecycleHook",
+            "autoscaling:RecordLifecycleActionHeartbeat",
+            "autoscaling:CreateAutoScalingGroup",
+            "autoscaling:CreateOrUpdateTags",
+            "autoscaling:UpdateAutoScalingGroup",
+            "autoscaling:EnableMetricsCollection",
+            "autoscaling:DescribePolicies",
+            "autoscaling:DescribeScheduledActions",
+            "autoscaling:DescribeNotificationConfigurations",
+            "autoscaling:SuspendProcesses",
+            "autoscaling:ResumeProcesses",
+            "autoscaling:AttachLoadBalancers",
+            "autoscaling:AttachLoadBalancerTargetGroups",
+            "autoscaling:PutScalingPolicy",
+            "autoscaling:PutScheduledUpdateGroupAction",
+            "autoscaling:PutNotificationConfiguration",
+            "autoscaling:PutWarmPool",
+            "autoscaling:DescribeScalingActivities",
+            "autoscaling:DeleteAutoScalingGroup",
+            "ec2:DescribeInstances",
+            "ec2:DescribeInstanceStatus",
+            "ec2:TerminateInstances",
+            "tag:GetResources",
+            "sns:Publish",
+            "cloudwatch:DescribeAlarms",
+            "cloudwatch:PutMetricAlarm",
+            "elasticloadbalancing:DescribeLoadBalancerAttributes",
+            "elasticloadbalancing:DescribeTargetGroupAttributes",
+            "elasticloadbalancing:DescribeLoadBalancers",
+            "elasticloadbalancing:DescribeInstanceHealth",
+            "elasticloadbalancing:RegisterInstancesWithLoadBalancer",
+            "elasticloadbalancing:DeregisterInstancesFromLoadBalancer",
+            "elasticloadbalancing:DescribeTargetGroups",
+            "elasticloadbalancing:DescribeTargetHealth",
+            "elasticloadbalancing:RegisterTargets",
+            "elasticloadbalancing:DeregisterTargets"
+            ],
+            "Resource": "*"
+          }
+        ]
+      }
+    state: present
+    tags:
+      Name: project2-code-deploy-service-policy
+  register: codedeploy_policy
+
+- name: Save the project2-code-deploy-service-policy
+  blockinfile:
+    path: /home/rocky/project2/vars.yml
+    block: |
+      codedeploy_policy_arn: {{ codedeploy_policy.policy.arn }}
+    marker: "# {mark} codedeploy_policy"
+
+
+
+- name: Create CodeDeploy Role
+  iam_role:
+    name: project2-code-deploy-role
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    region: "{{ region }}"
+    assume_role_policy_document: |
+      {
+        "Version": "2012-10-17",
+        "Statement": [
+          {
+            "Effect": "Allow",
+            "Principal": {
+              "Service": "codedeploy.amazonaws.com"
+            },
+            "Action": "sts:AssumeRole"
+          }
+        ]
+      }
+    state: present
+    tags:
+      Name: pproject2-code-deploy-role
+    managed_policy: "{{ codedeploy_policy_arn }}"
+  register: project2_CodeDeploy_Role
+
+
+
+- name: Save the project2_codedeploy_role_arn
+  
+  blockinfile:
+    path: /home/rocky/project2/vars.yml
+    block: |
+      codedeploy_role_arn: {{ project2_CodeDeploy_Role.iam_role.arn }}
+    marker: "# {mark} codedeploy_role"
+
+
+
+- name: Create EC2 Role
+
+  iam_role:
+    name: project2-code-deploy-ec2-role
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    region: "{{ region }}"
+    assume_role_policy_document: |
+      {
+        "Version": "2012-10-17",
+        "Statement": [
+          {
+            "Effect": "Allow",
+            "Principal": {
+              "Service": [
+                "ec2.amazonaws.com"
+              ]
+            },
+            "Action": "sts:AssumeRole"
+          }
+        ]
+      }
+    state: present
+    tags:
+      Name: project2-code-deploy-ec2-role
+    managed_policy: "{{ ec2_policy_arn }}"
+  register: project2_EC2_Role
+
+
+- name: Save the project2_ec2_role_arn
+  blockinfile:
+    path: /home/rocky/project2/vars.yml
+    block: |
+      ec2_role_arn: {{ project2_EC2_Role.iam_role.arn }}
+    marker: "# {mark} ec2_role"

@@ -1,0 +1,67 @@
+# Public Subnet1 삭제
+- name: Delete Public Subnet1
+  amazon.aws.ec2_vpc_subnet:
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    cidr: 10.2.0.0/20
+    region: "{{ region }}"
+    vpc_id: "{{ vpc_id }}"
+    state: absent
+  register: delete_public_subnet1
+
+- name: Remove Public Subnet1 block from vars.yml
+  blockinfile:
+    path: /home/rocky/project2/vars.yml
+    marker: "# {mark} Public Subnet 2a"
+    state: absent
+
+# Public Subnet2 삭제
+- name: Delete Public Subnet2
+  amazon.aws.ec2_vpc_subnet:
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    cidr: 10.2.16.0/20
+    region: "{{ region }}"
+    vpc_id: "{{ vpc_id }}"
+    state: absent
+  register: delete_public_subnet2
+
+- name: Remove Public Subnet2 block from vars.yml
+  blockinfile:
+    path: /home/rocky/project2/vars.yml
+    marker: "# {mark} Public Subnet 2c"
+    state: absent
+
+# Private Subnet1 삭제
+- name: Delete Private Subnet1
+  amazon.aws.ec2_vpc_subnet:
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    cidr: 10.2.64.0/20
+    region: "{{ region }}"
+    vpc_id: "{{ vpc_id }}"
+    state: absent
+  register: delete_private_subnet1
+
+- name: Remove Private Subnet1 block from vars.yml
+  blockinfile:
+    path: /home/rocky/project2/vars.yml
+    marker: "# {mark} Private Subnet 2a"
+    state: absent
+
+# Private Subnet2 삭제
+- name: Delete Private Subnet2
+  amazon.aws.ec2_vpc_subnet:
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    cidr: 10.2.80.0/20
+    region: "{{ region }}"
+    vpc_id: "{{ vpc_id }}"
+    state: absent
+  register: delete_private_subnet2
+
+- name: Remove Private Subnet2 block from vars.yml
+  blockinfile:
+    path: /home/rocky/project2/vars.yml
+    marker: "# {mark} Private Subnet 2c"
+    state: absent

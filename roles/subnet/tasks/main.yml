@@ -1,0 +1,89 @@
+---
+- name: Create Public Subnet1
+  amazon.aws.ec2_vpc_subnet:
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    cidr: 10.2.0.0/20
+    region: "{{ region }}"
+    az: "{{ region }}a"
+    vpc_id: "{{ vpc_id }}"
+    tags:
+      Name: project2-subnet-public1-2a
+  register: public_subnet1
+
+- name: Save the TEAM02_subnet_pub_2a
+  blockinfile:
+    path: /home/rocky/project2/vars.yml
+    block: |
+      subnet_pub_2a: {{ public_subnet1.subnet.id }}
+    marker: "# {mark} Public Subnet 2a"
+
+
+
+- name: Create Public Subnet2
+  amazon.aws.ec2_vpc_subnet:
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    cidr: 10.2.16.0/20
+    region: "{{ region }}"
+    az: "{{ region }}c"
+    vpc_id: "{{ vpc_id }}"
+    tags:
+      Name: project2-subnet-public2-2c
+  register: public_subnet2
+
+- name: Save the TEAM02_subnet_pub_2c
+  blockinfile:
+    path: /home/rocky/project2/vars.yml
+    block: |
+      subnet_pub_2c: {{ public_subnet2.subnet.id }}
+    marker: "# {mark} Public Subnet 2c"
+
+- name: Create Private Subnet1
+  amazon.aws.ec2_vpc_subnet:
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    cidr: 10.2.64.0/20
+    region: "{{ region }}"
+    az: "{{ region }}a"
+    vpc_id: "{{ vpc_id }}"
+    tags:
+      Name: project2-subnet-private1-2a
+  register: private_subnet1
+
+- name: Save the TEAM02_subnet_pri_2a
+  blockinfile:
+    path: /home/rocky/project2/vars.yml
+    block: |
+      subnet_pri_2a: {{ private_subnet1.subnet.id }}
+    marker: "# {mark} Private Subnet 2a"
+
+
+- name: Create Private Subnet2
+  amazon.aws.ec2_vpc_subnet:
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    cidr: 10.2.80.0/20
+    region: "{{ region }}"
+    az: "{{ region }}c"
+    vpc_id: "{{ vpc_id }}"
+    tags:
+      Name: project2-subnet-private2-2c
+  register: private_subnet2
+
+- name: Save the TEAM02_subnet_pri_2c
+  blockinfile:
+    path: /home/rocky/project2/vars.yml
+    block: |
+      subnet_pri_2c: {{ private_subnet2.subnet.id }}
+    marker: "# {mark} Private Subnet 2c"
+
+
+- name: Debug Subnet
+  ansible.builtin.debug:
+    var: "{{ item }}"
+  loop:
+    - public_subnet1
+    - public_subnet2
+    - private_subnet1
+    - private_subnet2

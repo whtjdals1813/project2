@@ -1,0 +1,50 @@
+  - name: Create Route Table for Public Subnet
+    ec2_vpc_route_table:
+      region: "{{ region }}"
+      vpc_id: "{{ vpc_id }}"
+      aws_access_key: "{{ aws_access_key }}"
+      aws_secret_key: "{{ aws_secret_key }}"
+      state: present
+      subnets:
+        - "{{ subnet_pub_2a }}"
+        - "{{ subnet_pub_2c }}"
+      routes:
+        - dest: 0.0.0.0/0
+          gateway_id: "{{ igw_id }}"
+      tags:
+        Name: project2_public_route_table
+      state: present
+    register: public_route_table_result
+
+
+  - name: Create Route Table for Private Subnet 2a
+    ec2_vpc_route_table:
+      region: "{{ region }}"
+      vpc_id: "{{ vpc_id }}"
+      aws_access_key: "{{ aws_access_key }}"
+      aws_secret_key: "{{ aws_secret_key }}"
+      subnets: "{{ subnet_pri_2a }}"
+      routes:
+        - dest: 0.0.0.0/0
+          gateway_id: "{{ ngw_id }}"
+      tags:
+        Name: project2_private_route_table_2a
+      state: present
+    register: private_route_table_result_2a
+
+
+
+  - name: Create Route Table for Private Subnet 2c
+    ec2_vpc_route_table:
+      region: "{{ region }}"
+      vpc_id: "{{ vpc_id }}"
+      aws_access_key: "{{ aws_access_key }}"
+      aws_secret_key: "{{ aws_secret_key }}"
+      subnets: "{{ subnet_pri_2c }}"
+      routes:
+        - dest: 0.0.0.0/0
+          gateway_id: "{{ ngw_id }}"
+      tags:
+        Name: project2_private_route_table_2c
+      state: present
+    register: private_route_table_result_2c

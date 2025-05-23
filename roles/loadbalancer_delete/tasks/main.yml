@@ -1,0 +1,16 @@
+---
+- name: Delete Application Load Balancer
+  elb_application_lb:
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    name: project2-alb
+    region: "{{ region }}"
+    state: absent
+  register: delete_alb_result
+
+- name: Remove ALB block from vars.yml
+  blockinfile:
+    path: /home/rocky/project2/vars.yml
+    marker: "# {mark} elb"
+    state: absent
+

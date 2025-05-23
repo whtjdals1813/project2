@@ -1,0 +1,34 @@
+---
+# tasks file for launchtemplate
+- name: Create fully-formed launch template
+  ec2_launch_template:
+    name: project2-template
+    version_description: version_1
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    image_id: "{{ project2_ami_id }}"
+    instance_type: t2.micro
+    iam_instance_profile: project2-code-deploy-ec2-role
+    key_name: "project2-key"
+    region: "{{ region }}"
+    network_interfaces:
+      - device_index: 0
+        subnet_id: "{{ subnet_pri_2a }}"
+        associate_public_ip_address: false
+        groups:
+          - "{{ sg_web_id }}"
+          - "{{ sg_spring_id }}"
+          - "{{ sg_remote_id }}"
+  register: project2_template
+
+- name: Show ec2_launch_template result
+  debug:
+    var: project2_template
+
+- name: Save launch template ID
+  blockinfile:
+    path: /home/rocky/project2/vars.yml
+    block: |
+      launch_template_id: {{ project2_template.default_template.launch_template_id }}
+    marker: "# {mark} launch_template"
+  when: project2_template.default_template.launch_template_id is defined

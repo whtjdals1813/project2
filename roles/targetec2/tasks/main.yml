@@ -1,0 +1,28 @@
+---
+- name: Create target EC2
+  ec2_instance:
+    instance_type: t2.micro
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    key_name: "project2-key"
+    image_id: "ami-05a7f3469a7653972"
+    region: "{{ region }}"
+    vpc_subnet_id: "{{ subnet_pri_2a }}"
+    security_groups:
+      - "{{ sg_web_id }}"
+      - "{{ sg_spring_id }}"
+      - "{{ sg_remote_id }}"
+    wait: yes
+    wait_timeout: 100
+    tags:
+      Name: "project2-target"
+  register: target_result
+
+- name: Save target EC2 info
+  blockinfile:
+    path: /home/rocky/project2/vars.yml
+    block: |
+      target_instance_id: {{ target_result.instances[0].instance_id }}
+    marker: "# {mark} target_instance"
+  when: target_result.instances is defined
+

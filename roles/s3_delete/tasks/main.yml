@@ -1,0 +1,9 @@
+---
+# tasks file for s3_delete
+- name: Delete S3 bucket
+  amazon.aws.s3_bucket:
+    name: project2-bucket-00
+    state: absent
+    region: "{{ region }}"
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"

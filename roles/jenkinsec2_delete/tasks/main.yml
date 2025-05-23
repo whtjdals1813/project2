@@ -1,0 +1,20 @@
+---
+# Jenkins 인스턴스 삭제 (태그 기반)
+- name: Terminate Jenkins EC2 instance
+  amazon.aws.ec2_instance:
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    region: "{{ region }}"
+    state: absent
+    filters:
+      "tag:Name": "project2-jenkins"
+  register: terminate_jenkins_result
+
+# vars.yml에서 Jenkins 변수 제거
+- name: Remove jenkins_private_ip block from vars.yml
+  blockinfile:
+    path: /home/rocky/project2/vars.yml
+    marker: "# {mark} jenkins_private_ip"
+    state: absent
+
+# tasks file for jenkinsec2_delete

@@ -1,0 +1,68 @@
+---
+# 인터넷 게이트웨이
+- name: Create Internet Gateway
+  ec2_vpc_igw:
+    vpc_id: "{{ vpc_id }}"
+    region: "{{ region }}"
+    state: present
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    tags:
+      Name: project2-igw
+  register: igw_result
+  when: igw_result.gateway_id is not defined or igw_result.gateway_id.changed
+
+
+- name: Save the project2-igw
+  blockinfile:
+    path: /home/rocky/project2/vars.yml
+    block: |
+      igw_id: {{ igw_result.gateway_id }}
+    marker: "# {mark} igw_id"
+
+# 탄력적 ip 자동할당
+     
+
+- name: Create Elastic IP
+  ec2_eip:
+    state: present
+    region: "{{ region }}"
+    in_vpc: true
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    tags:
+      Name: project2_nat_eip
+  register: eip_result
+  when: eip_exists is not defined or eip_exists == ""
+
+- name: Save the project2_nat_eip
+  blockinfile:
+    path: /home/rocky/project2/vars.yml
+    block: |
+      allocation_id: {{ eip_result.allocation_id }}
+    marker: "# {mark} eip"
+  when: eip_result.allocation_id is defined
+
+
+
+# NAT 게이트웨이
+- name: Create NAT Gateway
+  ec2_vpc_nat_gateway:
+    region: "{{ region }}"
+    state: present
+    allocation_id: "{{ allocation_id }}"
+    subnet_id: "{{ subnet_pub_2a }}"
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    tags:
+      Name: project2-ngw
+  register: nat_gateway_result
+  when: nat_gateway_exists is not defined or nat_gateway_exists == ""
+
+- name: Save the project2-ngw
+  blockinfile:
+    path: /home/rocky/project2/vars.yml
+    block: |
+      ngw_id: {{ nat_gateway_result.nat_gateway_id }}
+    marker: "# {mark} ngw_id"
+  when: nat_gateway_result.nat_gateway_id is defined

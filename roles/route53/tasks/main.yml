@@ -1,0 +1,31 @@
+---
+- name: Add to jenkins.domain.com
+  community.aws.route53:
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    state: present
+    zone: jinlabs.net
+    record: project2.jenkins.jinlabs.net
+    type: A
+    value: "{{ dns_name }}"
+    alias: true
+    alias_hosted_zone_id: "{{ hosted_zone_id }}"
+    wait: yes
+    overwrite: true  
+  register: domain_jenkins_result  
+
+
+- name: Add to web.domain.com
+  community.aws.route53:
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    state: present
+    zone: jinlabs.net
+    record: project2.jinlabs.net
+    type: A
+    value: "{{ dns_name }}"
+    alias: true
+    alias_hosted_zone_id: "{{ hosted_zone_id }}"
+    wait: yes
+    overwrite: true
+  register: domain_web_result

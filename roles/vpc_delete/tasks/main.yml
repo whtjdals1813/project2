@@ -1,0 +1,15 @@
+---
+- name: Delete VPC
+  amazon.aws.ec2_vpc_net:
+    name: project2_VPC
+    cidr_block: 10.2.0.0/16
+    region: "{{ region }}"
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    state: absent
+  register: vpc
+- name: Remove VPC block from vars.yml
+  blockinfile:
+    path: /home/rocky/project2/vars.yml
+    marker: "# {mark} vpc"
+    state: absent

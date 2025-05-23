@@ -1,0 +1,52 @@
+---
+- name: Create target group 
+  elb_target_group:
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    name: project2-target-group
+    protocol: http
+    region: "{{ region }}"
+    port: 80
+    vpc_id: "{{ vpc_id }}"
+    health_check_protocol: http
+    health_check_path: /
+    successful_response_codes: "200,250-260"
+    tags:
+      Name: project2-target-group
+    state: present
+  register: project2_target_group_result
+  when: project2_target_group_result is not defined or project2_target_group_result.changed
+
+
+- name: Save the target group result
+  blockinfile:
+    path: /home/rocky/project2/vars.yml
+    block: |
+      target_group_web_arn: {{ project2_target_group_result.target_group_arn }}
+    marker: "# {mark} target_group_web"
+
+- name: Create target group jenkins
+  elb_target_group:
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    name: project2-target-group-jenkins
+    protocol: http
+    region: "{{ region }}"
+    port: 80
+    vpc_id: "{{ vpc_id }}"
+    health_check_protocol: http
+    health_check_path: /
+    successful_response_codes: "200,250-260"
+    tags:
+      Name: project2-target-group-jenkins
+    state: present
+  register: project2_target_group_jenkins_result
+  when: project2_target_group_jenkins_result is not defined or project2_target_group_jenkins_result.changed
+
+
+- name: Save the target group jenkins result
+  blockinfile:
+    path: /home/rocky/project2/vars.yml
+    block: |
+      target_group_jenkins_arn: {{ project2_target_group_jenkins_result.target_group_arn }}
+    marker: "# {mark} target_group_jenkins"

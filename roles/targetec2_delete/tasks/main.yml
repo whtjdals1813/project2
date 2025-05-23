@@ -1,0 +1,11 @@
+---
+# EC2 인스턴스 삭제 - Name 태그 기반
+- name: Terminate EC2 instance named 'project2-target'
+  amazon.aws.ec2_instance:
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    region: "{{ region }}"
+    state: absent
+    filters:
+      "tag:Name": "project2-target"
+  register: delete_target_instance

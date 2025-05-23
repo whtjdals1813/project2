@@ -1,0 +1,54 @@
+- name: Create Load Balancer
+  amazon.aws.elb_application_lb:
+    name: project2-alb
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    subnets:
+      - "{{ subnet_pub_2a }}"
+      - "{{ subnet_pub_2c }}"
+    security_groups:
+      - "{{ sg_web_id }}"
+    region: "{{ region }}"
+    listeners:
+      - Protocol: HTTP
+        Port: 80
+        DefaultActions:
+          - Type: forward
+            TargetGroupName: project2-target-group-jenkins
+        Rules:
+          - Conditions:
+            - Field: host-header
+              Values:
+                - "project2.jenkins.jinlabs.net"
+            Priority: '2'
+            Actions:
+              - TargetGroupName: project2-target-group-jenkins
+                Type: forward
+          - Conditions:
+            - Field: host-header
+              Values:
+                - "project2.jinlabs.net"
+            Actions:
+              - TargetGroupName: project2-target-group
+                Type: forward
+            Priority: '1'
+    tags:
+      Team: project2-alb
+    state: present
+  register: alb_result
+
+- name: Debug alb_result
+  debug:
+    var: alb_result
+
+
+- name: Save the project2_alb result
+  blockinfile:
+    path: /home/rocky/project2/vars.yml
+    block: |
+      hosted_zone_id: {{ alb_result.canonical_hosted_zone_id }}
+      dns_name: {{ alb_result.dns_name }}
+    marker: "# {mark} elb"
+
+
+

@@ -1,0 +1,64 @@
+---
+# NAT 게이트웨이 삭제
+- name: Delete NAT Gateway
+  amazon.aws.ec2_vpc_nat_gateway:
+    region: "{{ region }}"
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    nat_gateway_id: "{{ ngw_id }}"
+    state: absent
+  register: delete_ngw_result
+- name: Remove ngw_id block from vars.yml
+  blockinfile:
+    path: /home/rocky/project2/vars.yml
+    marker: "# {mark} ngw_id"
+    state: absent
+
+
+# 인터넷 자동할당 삭제
+- name: Get all Elastic IPs
+  amazon.aws.ec2_eip_info:
+    region: "{{ region }}"
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+  register: eip_info
+
+- name: Extract public_ip from allocation_id
+  set_fact:
+    eip_public_ip: "{{ (eip_info.addresses | selectattr('allocation_id', 'equalto', allocation_id) | list)[0].public_ip }}"
+
+
+- name: Delete Elastic IP
+  amazon.aws.ec2_eip:
+    region: "{{ region }}"
+    public_ip: "{{ eip_public_ip }}"
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    state: absent
+  register: delete_eip_result
+
+
+- name: Remove eip_id block from vars.yml
+  blockinfile:
+    path: /home/rocky/project2/vars.yml
+    marker: "# {mark} eip"
+    state: absent
+
+
+
+# 인터넷 게이트웨이 삭제
+- name: Delete Internet Gateway
+  amazon.aws.ec2_vpc_igw:
+    region: "{{ region }}"
+    vpc_id: "{{ vpc_id }}"
+    internet_gateway_id: "{{ igw_id }}"
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    state: absent
+  register: delete_igw_result
+
+- name: Remove igw_id block from vars.yml
+  blockinfile:
+    path: /home/rocky/project2/vars.yml
+    marker: "# {mark} igw_id"
+    state: absent

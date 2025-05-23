@@ -1,0 +1,39 @@
+---
+- name: Stop target instance
+  amazon.aws.ec2_instance:
+    instance_ids: "{{ target_instance_id }}"
+    region: "{{ region }}"
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    state: stopped
+  register: stop_instance_result
+
+- name: Wait for instance to stop
+  amazon.aws.ec2_instance_info:
+    region: "{{ region }}"
+    instance_ids: "{{ target_instance_id }}"
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+  register: instance_status
+  until: instance_status.instances[0].state.name == "stopped"
+  retries: 10
+  delay: 10
+
+- name: Create AMI from stopped instance
+  amazon.aws.ec2_ami:
+    instance_id: "{{ target_instance_id }}"
+    name: "project2-ami"
+    region: "{{ region }}"
+    wait: yes
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    tags:
+      Name: project2-ami
+  register: ami_result
+
+- name: Save AMI ID
+  blockinfile:
+    path: /home/rocky/project2/vars.yml
+    block: |
+      project2_ami_id: {{ ami_result.image_id }}
+    marker: "# {mark} ami"

@@ -1,0 +1,65 @@
+---
+# tasks file for iam_delete
+# EC2 정책 삭제
+- name: Delete IAM Policy - EC2
+  amazon.aws.iam_managed_policy:
+    policy_name: project2-code-deploy-ec2-Policy
+    state: absent
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    region: "{{ region }}"
+  register: delete_ec2_policy_result
+
+- name: Remove ec2_policy block from vars.yml
+  blockinfile:
+    path: /home/rocky/project2/vars.yml
+    marker: "# {mark} ec2_policy"
+    state: absent
+
+# CodeDeploy 정책 삭제
+- name: Delete IAM Policy - CodeDeploy
+  amazon.aws.iam_managed_policy:
+    policy_name: project2-code-deploy-service-policy
+    state: absent
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    region: "{{ region }}"
+  register: delete_codedeploy_policy_result
+
+- name: Remove codedeploy_policy block from vars.yml
+  blockinfile:
+    path: /home/rocky/project2/vars.yml
+    marker: "# {mark} codedeploy_policy"
+    state: absent
+
+# CodeDeploy 역할 삭제
+- name: Delete IAM Role - CodeDeploy
+  amazon.aws.iam_role:
+    name: project2-code-deploy-role
+    state: absent
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    region: "{{ region }}"
+  register: delete_codedeploy_role_result
+
+- name: Remove codedeploy_role block from vars.yml
+  blockinfile:
+    path: /home/rocky/project2/vars.yml
+    marker: "# {mark} codedeploy_role"
+    state: absent
+
+# EC2 역할 삭제
+- name: Delete IAM Role - EC2
+  amazon.aws.iam_role:
+    name: project2-code-deploy-ec2-role
+    state: absent
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    region: "{{ region }}"
+  register: delete_ec2_role_result
+
+- name: Remove ec2_role block from vars.yml
+  blockinfile:
+    path: /home/rocky/project2/vars.yml
+    marker: "# {mark} ec2_role"
+    state: absent

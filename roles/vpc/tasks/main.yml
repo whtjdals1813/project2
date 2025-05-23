@@ -1,0 +1,23 @@
+---
+- name: Create VPC
+  amazon.aws.ec2_vpc_net:
+    name: project2_VPC
+    cidr_block: 10.2.0.0/16
+    region: "{{ region }}"
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    tenancy: default
+    tags:
+      Name: project2_VPC
+  register: vpc
+- name: Debug VPC
+  ansible.builtin.debug:
+    var: vpc
+
+- name: Save project2_VPC
+  blockinfile:
+    path: /home/rocky/project2/vars.yml
+    block: |
+      vpc_id: {{ vpc.vpc.id }}
+    marker: "# {mark} vpc"
+

@@ -1,0 +1,42 @@
+---
+# tasks file for jenkinsec2
+- name: Create jenkins
+  ec2_instance:
+    instance_type: t3.large
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    key_name: "project2-key"
+    image_id: "ami-05a7f3469a7653972"
+    region: "{{ region }}"
+    security_groups:
+      - "{{ sg_web_id }}"
+      - "{{ sg_spring_id }}"
+      - "{{ sg_remote_id }}"
+    subnet_id: "{{ subnet_pri_2a }}"
+    volumes:
+      - device_name: /dev/sda1
+        ebs:
+          volume_size: 30
+          delete_on_termination: true
+    wait: yes
+    wait_timeout: 100
+    network:
+      assign_public_ip: no
+    tags:
+      Name: project2-jenkins
+    user_data: "{{ lookup('file', 'user_data.sh') }}"
+  register: project2_jenkins_result
+
+- name: Debug jenkins instance result
+  debug:
+    var: project2_jenkins_result
+
+- name: Save the project2_jenkins
+  blockinfile:
+    path: /home/rocky/project2/vars.yml
+    block: |
+      jenkins_arn: {{ project2_jenkins_result.instances[0].instance_id }}
+      jenkins_private_ip: {{ project2_jenkins_result.instances[0].private_ip_address }}
+
+    marker: "# {mark} jenkins_private_ip"
+

@@ -1,0 +1,19 @@
+---
+# tasks file for bastion_delete
+# Bastion EC2 인스턴스 삭제
+- name: Terminate bastion instance
+  amazon.aws.ec2_instance:
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    region: "{{ region }}"
+    state: absent
+    filters:
+      "tag:Name": "project2-bastion"
+  register: terminate_bastion_result
+
+# vars.yml에서 bastion IP 제거
+- name: Remove bastion_pub_ip block from vars.yml
+  blockinfile:
+    path: /home/rocky/project2/vars.yml
+    marker: "# {mark} bastion_pub_ip"
+    state: absent

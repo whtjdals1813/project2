@@ -1,0 +1,27 @@
+---
+# tasks file for bastion
+- name: Create bastion
+
+  ec2_instance:
+    instance_type: t2.micro
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    key_name: "project2-key"
+    image_id: "ami-05a7f3469a7653972"
+    region: "{{ region }}"
+    security_group: "{{ sg_remote_id }}"
+    subnet_id: "{{ subnet_pub_2a }}"
+    wait: yes
+    wait_timeout: 100
+    network:
+      assign_public_ip: yes
+    tags:
+      Name: project2-bastion
+  register: bastion_result
+
+- name: Save the project2-bastion
+  blockinfile:
+    path: /home/rocky/project2/vars.yml
+    block: |
+      bastion_pub_ip: {{ bastion_result.instances[0].public_ip_address }}
+    marker: "# {mark} bastion_pub_ip"

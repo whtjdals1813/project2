@@ -1,0 +1,43 @@
+---
+# tasks file for asg_delete (안전하게 삭제)
+
+# 1. ASG 용량 0으로 초기화 (인스턴스 모두 종료)
+- name: Set ASG size to 0 before delete
+  amazon.aws.ec2_asg:
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    region: "{{ region }}"
+    name: project2-autoscaling-group
+    desired_capacity: 0
+    min_size: 0
+    max_size: 0
+    state: present
+  register: scale_down_asg
+
+# 2. Auto Scaling Group 삭제
+- name: Delete Auto Scaling Group
+  amazon.aws.ec2_asg:
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    region: "{{ region }}"
+    name: project2-autoscaling-group
+    state: absent
+  register: delete_asg_result
+
+# 3. vars.yml에서 ASG 변수 제거
+- name: Remove project2_asg_name block from vars.yml
+  blockinfile:
+    path: /home/rocky/project2/vars.yml
+    marker: "# {mark} project2_asg_name"
+    state: absent
+
+# 4. Target Group 삭제
+- name: Deregister Jenkins EC2 instance from target group
+  community.aws.elb_target:
+    target_group_arn: "{{ target_group_jenkins_arn }}"
+    target_id: "{{ jenkins_arn }}"
+    state: absent
+    region: "{{ region }}"
+    target_port: 8080
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
