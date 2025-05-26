@@ -1,0 +1,12 @@
+---
+- name: Confirm instance profile-role binding
+  amazon.aws.iam_instance_profile_info:
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    name: project2-code-deploy-ec2-role
+    
+  register: profile_info
+
+- name: Show roles in instance profile
+  debug:
+    var: profile_info.instance_profiles[0].roles

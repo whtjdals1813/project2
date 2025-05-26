@@ -5,5 +5,5 @@
     - ./vars.yml
     - ./pass.yml
   roles:
-  - autoscaling
+  - iamprofile
   

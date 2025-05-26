@@ -1,3 +1,4 @@
+---
 - name: Create Load Balancer
   amazon.aws.elb_application_lb:
     name: project2-alb

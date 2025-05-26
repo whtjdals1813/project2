@@ -21,8 +21,6 @@
     marker: "# {mark} igw_id"
 
 # 탄력적 ip 자동할당
-     
-
 - name: Create Elastic IP
   ec2_eip:
     state: present

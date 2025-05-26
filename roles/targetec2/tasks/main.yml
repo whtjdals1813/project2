@@ -14,6 +14,7 @@
       - "{{ sg_remote_id }}"
     wait: yes
     wait_timeout: 100
+    user_data: "{{ lookup('file', 'target_data.sh') }}"
     tags:
       Name: "project2-target"
   register: target_result

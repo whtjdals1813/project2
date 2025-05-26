@@ -46,9 +46,6 @@ codedeploy_role_arn: arn:aws:iam::491085389788:role/project2-code-deploy-role
 # BEGIN ec2_role
 ec2_role_arn: arn:aws:iam::491085389788:role/project2-code-deploy-ec2-role
 # END ec2_role
-# BEGIN ami
-project2_ami_id: ami-056bbaf10ff5cdc99
-# END ami
 # BEGIN target_group_web
 target_group_web_arn: arn:aws:elasticloadbalancing:ap-northeast-2:491085389788:targetgroup/project2-target-group/836b9a59509779db
 # END target_group_web
@@ -63,16 +60,19 @@ dns_name: project2-alb-1924636276.ap-northeast-2.elb.amazonaws.com
 bastion_pub_ip: 3.38.190.184
 # END bastion_pub_ip
 # BEGIN target_instance
-target_instance_id: i-0cfb061eff28ee8a9
+target_instance_id: i-05c7a5814cf2a2528
 # END target_instance
-# BEGIN launch_template
-launch_template_id: lt-007e8de45dd693b46
-# END launch_template
-# BEGIN project2_asg_name
-project2_asg_name: "project2-autoscaling-group"
-project2_asg_arn: "arn:aws:autoscaling:ap-northeast-2:491085389788:autoScalingGroup:4654a80f-74c1-4446-a775-4b68a7a6dc09:autoScalingGroupName/project2-autoscaling-group"
-# END project2_asg_name
 # BEGIN jenkins_private_ip
 jenkins_arn: i-029fc50d8ae6ec176
 jenkins_private_ip: 10.2.78.64
 # END jenkins_private_ip
+# BEGIN ami
+project2_ami_id: ami-0f90c925e83995e9e
+# END ami
+# BEGIN launch_template
+launch_template_id: lt-00cf2807f5ded519b
+# END launch_template
+# BEGIN project2_asg_name
+project2_asg_name: "project2-autoscaling-group"
+project2_asg_arn: "arn:aws:autoscaling:ap-northeast-2:491085389788:autoScalingGroup:c614f742-9d2b-4f55-a3b7-60315dec3337:autoScalingGroupName/project2-autoscaling-group"
+# END project2_asg_name

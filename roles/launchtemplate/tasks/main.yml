@@ -8,7 +8,6 @@
     aws_secret_key: "{{ aws_secret_key }}"
     image_id: "{{ project2_ami_id }}"
     instance_type: t2.micro
-    iam_instance_profile: project2-code-deploy-ec2-role
     key_name: "project2-key"
     region: "{{ region }}"
     network_interfaces:
