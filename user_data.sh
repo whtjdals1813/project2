@@ -1,3 +1,5 @@
+#!/bin/bash
+
 cd /home/ubuntu
 
 git clone https://github.com/sjh4616/aws-project.git
