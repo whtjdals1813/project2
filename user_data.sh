@@ -2,7 +2,7 @@
 
 cd /home/ubuntu
 
-git clone https://github.com/sjh4616/aws-project.git
+git clone https://github.com/whtjdals1813/aws-project.git
 
 cd aws-project
 
