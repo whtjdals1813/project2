@@ -35,7 +35,7 @@
     port: 80
     vpc_id: "{{ vpc_id }}"
     health_check_protocol: http
-    health_check_path: /
+    health_check_path: /login
     successful_response_codes: "200,250-260"
     tags:
       Name: project2-target-group-jenkins
