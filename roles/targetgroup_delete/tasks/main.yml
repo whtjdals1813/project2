@@ -1,4 +1,5 @@
 ---
+# Delete target group (웹)
 - name: Delete target group
   elb_target_group:
     aws_access_key: "{{ aws_access_key }}"
@@ -12,4 +13,20 @@
   blockinfile:
     path: /home/rocky/project2/vars.yml
     marker: "# {mark} target_group_web"
+    state: absent
+
+# Delete target group (젠킨스)
+- name: Delete target group jenkins
+  elb_target_group:
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    name: project2-target-group-jenkins
+    region: "{{ region }}"
+    state: absent
+  register: delete_target_group_jenkins_result
+
+- name: Remove target group jenkins ARN block from vars.yml
+  blockinfile:
+    path: /home/rocky/project2/vars.yml
+    marker: "# {mark} target_group_jenkins"
     state: absent

@@ -9,3 +9,10 @@
     filters:
       "tag:Name": "project2-target"
   register: delete_target_instance
+
+# 변수 파일에서 target_instance_id 블록 제거
+- name: Remove target_instance_id block from vars.yml
+  blockinfile:
+    path: /home/rocky/project2/vars.yml
+    marker: "# {mark} target_instance"
+    state: absent

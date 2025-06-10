@@ -14,4 +14,7 @@ sh install-docker.sh
 
 sh install-docker-compose.sh
 
-docker-compose up -d
+sudo usermod -aG docker ubuntu
+
+sudo docker-compose up -d
+
